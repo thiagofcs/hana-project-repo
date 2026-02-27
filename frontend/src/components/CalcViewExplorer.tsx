@@ -1203,7 +1203,7 @@ export default function CalcViewExplorer() {
                             <tr key={rowIdx}
                               onClick={e => handleRowClick(sortedIdx, e)}
                               onContextMenu={e => handleRowContextMenu(sortedIdx, e)}
-                              className={`border-b border-gray-50 dark:border-gray-800 transition-colors cursor-pointer select-none
+                              className={`border-b border-gray-50 dark:border-gray-800 transition-colors cursor-pointer
                                 ${isSelected
                                   ? selSlot === 0
                                     ? 'bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-950/70'
@@ -1211,7 +1211,7 @@ export default function CalcViewExplorer() {
                                   : 'hover:bg-gray-50/80 dark:hover:bg-gray-800/40'}
                               `}
                             >
-                              <td className="px-4 py-3 text-xs font-mono w-10 shrink-0">
+                              <td className="px-4 py-3 text-xs font-mono w-10 shrink-0 select-none">
                                 {isSelected ? (
                                   <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold text-white ${selSlot === 0 ? 'bg-blue-500' : 'bg-violet-500'}`}>
                                     {selSlot === 0 ? 'A' : 'B'}
