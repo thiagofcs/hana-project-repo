@@ -13,13 +13,9 @@ export default function SessionBar() {
 
   if (!session) return null;
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setIsLoggingOut(true);
-    try {
-      await apiLogout(session.token);
-    } catch {
-      // Best-effort logout
-    }
+    apiLogout(session.token).catch(() => {}); // Best-effort, fire-and-forget
     logout();
     router.replace('/login');
   };
