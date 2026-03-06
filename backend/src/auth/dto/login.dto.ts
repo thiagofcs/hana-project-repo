@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumberString } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumberString, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
@@ -26,4 +26,9 @@ export class LoginDto {
   @IsString()
   @IsOptional()
   database?: string;
+
+  @ApiProperty({ example: true, required: false, description: 'Enable TLS/SSL encryption (default: true). Set to false for servers without SSL.' })
+  @IsBoolean()
+  @IsOptional()
+  encrypt?: boolean;
 }

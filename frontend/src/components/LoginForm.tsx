@@ -12,6 +12,7 @@ interface RememberedFields {
   port:     string;
   user:     string;
   database: string;
+  encrypt:  boolean;
 }
 
 export default function LoginForm() {
@@ -23,6 +24,7 @@ export default function LoginForm() {
   const [user,     setUser]     = useState('');
   const [password, setPassword] = useState('');
   const [database, setDatabase] = useState('');
+  const [encrypt,  setEncrypt]  = useState(true);
   const [error,    setError]    = useState<string | null>(null);
   const [loading,  setLoading]  = useState(false);
 
@@ -36,6 +38,7 @@ export default function LoginForm() {
         setPort(r.port     ?? '443');
         setUser(r.user     ?? '');
         setDatabase(r.database ?? '');
+        setEncrypt(r.encrypt !== false);
       } catch { /* invalid JSON, use defaults */ }
     }
   }, []);
@@ -59,12 +62,13 @@ export default function LoginForm() {
         user,
         password,
         database: database || undefined,
+        encrypt,
       });
 
       // Persist non-sensitive fields
       localStorage.setItem(
         REMEMBER_KEY,
-        JSON.stringify({ host, port, user, database }),
+        JSON.stringify({ host, port, user, database, encrypt }),
       );
 
       login(result);
@@ -168,6 +172,20 @@ export default function LoginForm() {
                 placeholder="HXE"
                 className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               />
+            </div>
+
+            {/* SSL/Encrypt toggle */}
+            <div className="flex items-center gap-2">
+              <input
+                id="encrypt"
+                type="checkbox"
+                checked={encrypt}
+                onChange={e => setEncrypt(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="encrypt" className="text-sm text-gray-700 dark:text-gray-300">
+                Use SSL/TLS encryption
+              </label>
             </div>
 
             {/* Error */}

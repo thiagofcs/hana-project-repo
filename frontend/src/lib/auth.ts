@@ -6,6 +6,7 @@ export interface LoginPayload {
   user:      string;
   password:  string;
   database?: string;
+  encrypt?:  boolean;
 }
 
 export interface LoginResponse {

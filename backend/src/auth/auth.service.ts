@@ -74,7 +74,7 @@ export class AuthService implements OnModuleDestroy {
       serverNode:             `${dto.host}:${dto.port}`,
       uid:                    dto.user,
       pwd:                    dto.password,
-      encrypt:                true,
+      encrypt:                dto.encrypt !== false,
       sslValidateCertificate: false,
       communicationTimeout:   0,
       connectTimeout:         30000,
