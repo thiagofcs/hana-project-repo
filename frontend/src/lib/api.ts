@@ -91,6 +91,19 @@ export async function fetchCalcViewColumns(viewName: string): Promise<CalcViewCo
   );
 }
 
+export async function fetchRawSql(sql: string): Promise<CalcViewResult> {
+  return handleResponse(
+    await fetchWithTimeout(
+      `${API_BASE}/hana/raw`,
+      {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+        body:    JSON.stringify({ sql }),
+      },
+    ),
+  );
+}
+
 export async function fetchCalcView(
   viewName:        string,
   selectedColumns: string[],

@@ -22,6 +22,7 @@ import {
 } from './hana.service';
 import { SessionGuard, SessionPool } from '../auth/session.guard';
 import { QueryCalcViewDto } from './dto/query-calc-view.dto';
+import { QueryRawSqlDto }  from './dto/query-raw-sql.dto';
 
 @ApiTags('HANA')
 @Controller('hana')
@@ -46,6 +47,15 @@ export class HanaController {
   ): Promise<CalcViewColumnsResult> {
     if (!view) throw new BadRequestException('Query parameter "view" is required');
     return this.hanaService.getCalcViewColumns(pool, view);
+  }
+
+  @Post('raw')
+  @ApiOperation({ summary: 'Execute a raw SQL statement and return rows as CalcViewResult' })
+  async queryRaw(
+    @SessionPool() pool: hana.ConnectionPool,
+    @Body() dto: QueryRawSqlDto,
+  ): Promise<CalcViewResult> {
+    return this.hanaService.runRawSql(pool, dto.sql);
   }
 
   @Post('calcview')

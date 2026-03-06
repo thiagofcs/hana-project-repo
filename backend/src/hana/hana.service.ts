@@ -190,6 +190,27 @@ export class HanaService {
     };
   }
 
+  async runRawSql(
+    pool: hana.ConnectionPool,
+    sql:  string,
+  ): Promise<CalcViewResult> {
+    const trimmed = sql.trim();
+    if (!trimmed) throw new BadRequestException('SQL statement is required');
+
+    this.logger.log(`Executing raw SQL: ${trimmed.slice(0, 200)}${trimmed.length > 200 ? '…' : ''}`);
+    const rows    = await this.runQuery<Record<string, unknown>>(pool, trimmed, []);
+    const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
+
+    return {
+      viewName:     '(custom SQL)',
+      columns,
+      rows,
+      total:        rows.length,
+      topN:         rows.length,
+      appliedWhere: null,
+    };
+  }
+
   async queryCalcView(
     pool:            hana.ConnectionPool,
     viewName:        string,
