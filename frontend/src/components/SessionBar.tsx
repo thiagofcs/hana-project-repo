@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { apiLogout } from '@/lib/auth';
@@ -9,12 +8,10 @@ import { DarkModeToggle } from '@/components/DarkModeToggle';
 export default function SessionBar() {
   const router = useRouter();
   const { session, logout } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   if (!session) return null;
 
   const handleLogout = () => {
-    setIsLoggingOut(true);
     apiLogout(session.token).catch(() => {}); // Best-effort, fire-and-forget
     logout();
     router.replace('/login');
@@ -28,10 +25,9 @@ export default function SessionBar() {
       <DarkModeToggle />
       <button
         onClick={handleLogout}
-        disabled={isLoggingOut}
-        className="text-sm px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-am-orange-400 hover:text-am-orange-600 dark:hover:text-am-orange-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="text-sm px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-am-orange-400 hover:text-am-orange-600 dark:hover:text-am-orange-400 transition-colors"
       >
-        {isLoggingOut ? 'Logging out…' : 'Logout'}
+        Logout
       </button>
     </div>
   );

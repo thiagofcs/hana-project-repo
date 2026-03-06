@@ -6,6 +6,14 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  // Force-include all am-orange utilities so they are never purged,
+  // even if the dev server hasn't been restarted after a config change.
+  safelist: [
+    { pattern: /^bg-am-orange-/,     variants: ['hover', 'dark', 'dark:hover'] },
+    { pattern: /^text-am-orange-/,   variants: ['hover', 'dark', 'dark:hover'] },
+    { pattern: /^border-am-orange-/, variants: ['hover', 'dark', 'focus'] },
+    { pattern: /^ring-am-orange-/,   variants: ['focus'] },
+  ],
   darkMode: 'class',
   theme: {
     extend: {
