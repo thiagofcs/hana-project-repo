@@ -32,7 +32,7 @@ export function DarkModeToggle({ className = '' }: { className?: string }) {
       </svg>
 
       {/* Toggle pill */}
-      <div className={`relative w-8 h-4 rounded-full transition-colors ${isDark ? 'bg-blue-600' : 'bg-gray-200'}`}>
+      <div className={`relative w-8 h-4 rounded-full transition-colors ${isDark ? 'bg-am-orange-500' : 'bg-gray-200'}`}>
         <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow-sm transition-transform duration-200 ${isDark ? 'translate-x-4' : 'translate-x-0.5'}`} />
       </div>
 
@@ -45,7 +45,7 @@ export function DarkModeToggle({ className = '' }: { className?: string }) {
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={`w-3.5 h-3.5 transition-opacity ${isDark ? 'opacity-100 text-blue-400' : 'opacity-40'}`}
+        className={`w-3.5 h-3.5 transition-opacity ${isDark ? 'opacity-100 text-am-orange-400' : 'opacity-40'}`}
       >
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
       </svg>

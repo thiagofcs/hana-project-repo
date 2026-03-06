@@ -8,7 +8,24 @@ const config: Config = {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        // ArcelorMittal brand orange — Pantone 1575 C (#F47D30)
+        'am-orange': {
+          50:  '#FFF5EC',
+          100: '#FEEBD8',
+          200: '#FDD5AC',
+          300: '#FABB7D',
+          400: '#F7994E',
+          500: '#F47D30',
+          600: '#D96820',
+          700: '#B35218',
+          800: '#8C3F12',
+          900: '#3D1C08',
+          950: '#1F0D03',
+        },
+      },
+    },
   },
   plugins: [],
 };

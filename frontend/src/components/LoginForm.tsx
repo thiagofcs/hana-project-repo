@@ -108,7 +108,7 @@ export default function LoginForm() {
                 onChange={e => setHost(e.target.value)}
                 placeholder="hana.example.com"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent transition-colors"
               />
             </div>
 
@@ -123,7 +123,7 @@ export default function LoginForm() {
                 onChange={e => setPort(e.target.value)}
                 placeholder="443"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent transition-colors"
               />
             </div>
 
@@ -139,7 +139,7 @@ export default function LoginForm() {
                 placeholder="SYSTEM"
                 required
                 autoComplete="username"
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent transition-colors"
               />
             </div>
 
@@ -155,7 +155,7 @@ export default function LoginForm() {
                 placeholder="••••••••"
                 required
                 autoComplete="current-password"
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent transition-colors"
               />
             </div>
 
@@ -170,7 +170,7 @@ export default function LoginForm() {
                 value={database}
                 onChange={e => setDatabase(e.target.value)}
                 placeholder="HXE"
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent transition-colors"
               />
             </div>
 
@@ -181,7 +181,7 @@ export default function LoginForm() {
                 type="checkbox"
                 checked={encrypt}
                 onChange={e => setEncrypt(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-am-orange-500 focus:ring-am-orange-500"
               />
               <label htmlFor="encrypt" className="text-sm text-gray-700 dark:text-gray-300">
                 Use SSL/TLS encryption
@@ -199,7 +199,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-2.5 px-4 bg-am-orange-500 text-white rounded-lg font-medium hover:bg-am-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? 'Connecting…' : 'Connect'}
             </button>

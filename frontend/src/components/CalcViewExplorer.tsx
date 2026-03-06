@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
   fetchCalcViewColumns,
   fetchCalcView,
+  fetchRawSql,
   ViewColumn,
   CalcViewColumnsResult,
   CalcViewResult,
@@ -30,6 +31,7 @@ interface SortEntry { col: string; dir: SortDir }
 type Step = 'idle' | 'loadingColumns' | 'selectColumns' | 'querying' | 'results';
 
 interface CtxMenu { x: number; y: number }
+interface ColCtxMenu { col: string; x: number; y: number }
 
 interface SavedQuery {
   id:              string;
@@ -121,7 +123,7 @@ function Pagination({ currentPage, totalPages, onPageChange, totalRows, filtered
           {pages.map((p, i) => p === '...'
             ? <span key={`e${i}`} className="px-2 text-gray-400 text-xs">…</span>
             : <button key={p} onClick={() => onPageChange(p as number)}
-                className={`w-8 h-7 text-xs rounded-lg border transition-colors ${p === currentPage ? 'bg-blue-600 text-white border-blue-600 font-medium' : 'text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800'}`}>{p}</button>
+                className={`w-8 h-7 text-xs rounded-lg border transition-colors ${p === currentPage ? 'bg-am-orange-500 text-white border-am-orange-500 font-medium' : 'text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800'}`}>{p}</button>
           )}
           <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}
             className="px-2.5 py-1.5 text-xs text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-white dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next →</button>
@@ -159,7 +161,7 @@ function SortIcon({ dir }: { dir: SortDir | null }) {
       <span className="text-[8px] leading-none">▲</span><span className="text-[8px] leading-none">▼</span>
     </span>
   );
-  return <span className="text-[10px] leading-none text-blue-600">{dir === 'asc' ? '▲' : '▼'}</span>;
+  return <span className="text-[10px] leading-none text-am-orange-600">{dir === 'asc' ? '▲' : '▼'}</span>;
 }
 
 // ── Column Selector ──────────────────────────────────────────────────────────
@@ -198,14 +200,14 @@ function ColumnSelector({ meta, selected, preFilters, preFilterOps, onToggle, on
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={onSelectAll} className="px-3 py-1.5 text-xs font-medium text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors">Select All</button>
+          <button onClick={onSelectAll} className="px-3 py-1.5 text-xs font-medium text-am-orange-600 border border-am-orange-200 rounded-lg hover:bg-am-orange-50 transition-colors">Select All</button>
           <button onClick={onDeselectAll} className="px-3 py-1.5 text-xs font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Deselect All</button>
         </div>
       </div>
       <div className="px-4 py-3 border-b border-gray-100">
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search columns by name or type…"
-          className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600" />
+          className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600" />
       </div>
       <div className="grid grid-cols-[auto_1fr_auto_minmax(200px,280px)] gap-x-4 px-5 py-2 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
         <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide w-5" />
@@ -224,9 +226,9 @@ function ColumnSelector({ meta, selected, preFilters, preFilterOps, onToggle, on
               const hasFilter  = parsedVals.length > 0;
               return (
                 <div key={col.columnName}
-                  className={`grid grid-cols-[auto_1fr_auto_minmax(200px,280px)] gap-x-4 items-center px-5 py-2.5 transition-colors ${isChecked ? 'bg-blue-50/30 dark:bg-blue-950/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800'} ${hasFilter ? 'bg-amber-50/40 dark:bg-amber-950/20' : ''}`}>
+                  className={`grid grid-cols-[auto_1fr_auto_minmax(200px,280px)] gap-x-4 items-center px-5 py-2.5 transition-colors ${isChecked ? 'bg-am-orange-50/40 dark:bg-am-orange-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800'} ${hasFilter ? 'bg-amber-50/40 dark:bg-amber-950/20' : ''}`}>
                   <input type="checkbox" checked={isChecked} onChange={() => onToggle(col.columnName)}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
+                    className="w-4 h-4 rounded border-gray-300 text-am-orange-600 focus:ring-am-orange-500 cursor-pointer" />
                   <div className="min-w-0">
                     <span className={`text-sm font-mono font-medium ${isChecked ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-500'}`}>{col.columnName}</span>
                     {col.isNullable === 'TRUE' && <span className="ml-1.5 text-[10px] text-gray-300 dark:text-gray-600">nullable</span>}
@@ -237,7 +239,7 @@ function ColumnSelector({ meta, selected, preFilters, preFilterOps, onToggle, on
                   </div>
                   <div className="flex gap-1.5 items-start">
                     <select value={filterOp} onChange={e => onFilterOpChange(col.columnName, e.target.value)}
-                      className={`text-xs font-mono border rounded-md px-1.5 py-1.5 shrink-0 w-14 focus:outline-none focus:ring-1 transition-colors cursor-pointer ${hasFilter ? 'border-amber-300 bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-700 focus:ring-amber-400' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 focus:ring-blue-400'}`}>
+                      className={`text-xs font-mono border rounded-md px-1.5 py-1.5 shrink-0 w-14 focus:outline-none focus:ring-1 transition-colors cursor-pointer ${hasFilter ? 'border-amber-300 bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-700 focus:ring-amber-400' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 focus:ring-am-orange-400'}`}>
                       {['=', '!=', '>', '>=', '<', '<=', 'IN'].map(op => <option key={op} value={op}>{op}</option>)}
                     </select>
                     <div className="relative flex-1 min-w-0">
@@ -245,7 +247,7 @@ function ColumnSelector({ meta, selected, preFilters, preFilterOps, onToggle, on
                         placeholder={filterOp === 'IN'
                           ? (col.dataTypeName.match(/INT|DECIMAL|DOUBLE|REAL/i) ? '1,2,3' : 'A,B,C')
                           : (col.dataTypeName.match(/INT|DECIMAL|DOUBLE|REAL/i) ? '100' : 'ABC')}
-                        className={`w-full text-xs font-mono border rounded-md px-2.5 py-1.5 pr-6 focus:outline-none focus:ring-1 transition-colors placeholder:text-gray-300 ${hasFilter ? 'border-amber-300 bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-100 dark:border-amber-700 focus:ring-amber-400' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-blue-400 focus:border-blue-400'}`} />
+                        className={`w-full text-xs font-mono border rounded-md px-2.5 py-1.5 pr-6 focus:outline-none focus:ring-1 transition-colors placeholder:text-gray-300 ${hasFilter ? 'border-amber-300 bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-100 dark:border-amber-700 focus:ring-amber-400' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-am-orange-400 focus:border-am-orange-400'}`} />
                       {filterOp === 'IN' && parsedVals.length > 1 && (
                         <div className="absolute -bottom-5 left-0 flex gap-1 flex-wrap">
                           {parsedVals.map((v, i) => <span key={i} className="inline-block px-1 py-px bg-amber-100 text-amber-700 text-[9px] rounded font-mono leading-none">{v}</span>)}
@@ -510,7 +512,7 @@ function ContextMenu({
         disabled={!canCompare}
         className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition-colors
           ${canCompare
-            ? 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer'
+            ? 'text-gray-700 dark:text-gray-200 hover:bg-am-orange-50 dark:hover:bg-am-orange-900/20 hover:text-am-orange-600 dark:hover:text-am-orange-400 cursor-pointer'
             : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'}`}
       >
         <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -534,6 +536,89 @@ function ContextMenu({
         </svg>
         <span className="font-medium">Clear selection</span>
       </button>
+    </div>
+  );
+}
+
+// ── Column Context Menu ───────────────────────────────────────────────────────
+
+function ColumnContextMenu({
+  x, y, col, isNumeric, hasSumAlready, onAddSum, onRemoveSum, onClose,
+}: {
+  x: number; y: number; col: string; isNumeric: boolean; hasSumAlready: boolean;
+  onAddSum: () => void; onRemoveSum: () => void; onClose: () => void;
+}) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ x, y });
+
+  useEffect(() => {
+    if (!menuRef.current) return;
+    const { width, height } = menuRef.current.getBoundingClientRect();
+    const nx = x + width  > window.innerWidth  ? x - width  : x;
+    const ny = y + height > window.innerHeight ? y - height : y;
+    setPos({ x: nx, y: ny });
+  }, [x, y]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) onClose();
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const tid = setTimeout(() => {
+      window.addEventListener('mousedown', handler);
+      window.addEventListener('keydown', onKey);
+    }, 0);
+    return () => {
+      clearTimeout(tid);
+      window.removeEventListener('mousedown', handler);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      ref={menuRef}
+      style={{ position: 'fixed', top: pos.y, left: pos.x, zIndex: 9999 }}
+      className="min-w-[210px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl py-1.5 overflow-hidden"
+      onMouseDown={e => e.stopPropagation()}
+    >
+      <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700/60 mb-1">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 truncate" title={col}>{col}</p>
+      </div>
+
+      {isNumeric ? (
+        hasSumAlready ? (
+          <button
+            onClick={() => { onClose(); onRemoveSum(); }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-200 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-300 transition-colors cursor-pointer"
+          >
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>
+              <span className="font-medium block leading-tight">Remove SUM</span>
+              <span className="text-[11px] leading-tight opacity-70">Remove total for this column</span>
+            </span>
+          </button>
+        ) : (
+          <button
+            onClick={() => { onClose(); onAddSum(); }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-amber-900/30 hover:text-amber-700 dark:hover:text-amber-300 transition-colors cursor-pointer"
+          >
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>
+              <span className="font-medium block leading-tight">Add SUM</span>
+              <span className="text-[11px] leading-tight opacity-70">Show total across all rows</span>
+            </span>
+          </button>
+        )
+      ) : (
+        <div className="px-4 py-2.5">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500">No aggregations available for non-numeric columns</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -562,6 +647,8 @@ export default function CalcViewExplorer() {
   const [result,      setResult]      = useState<CalcViewResult | null>(null);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
   const [sqlExpanded, setSqlExpanded] = useState(true);
+  const [advancedMode, setAdvancedMode] = useState(false);
+  const [customSql,    setCustomSql]    = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [colFilters,  setColFilters]  = useState<Record<string, string>>({});
   const [sortOrder,   setSortOrder]   = useState<SortEntry[]>([]);
@@ -571,6 +658,10 @@ export default function CalcViewExplorer() {
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [ctxMenu,      setCtxMenu]      = useState<CtxMenu | null>(null);
   const [compareRows,  setCompareRows]  = useState<{ rowA: Record<string, unknown>; rowB: Record<string, unknown> } | null>(null);
+
+  // ── Column aggregations ───────────────────────────────────────────────────
+  const [sumColumns,  setSumColumns]  = useState<Set<string>>(new Set());
+  const [colCtxMenu,  setColCtxMenu]  = useState<ColCtxMenu | null>(null);
 
   // ── Load saved queries on mount ───────────────────────────────────────────
   useEffect(() => { setSavedQueries(readSavedQueries()); }, []);
@@ -720,6 +811,36 @@ export default function CalcViewExplorer() {
 
   const clearSelection = useCallback(() => setSelectedRows(new Set()), []);
 
+  // ── Column aggregations ───────────────────────────────────────────────────
+
+  const isColNumeric = useCallback((col: string): boolean => {
+    if (columnsMeta) {
+      const meta = columnsMeta.columns.find(c => c.columnName === col);
+      if (meta) return /INT|DECIMAL|DOUBLE|REAL|FLOAT/i.test(meta.dataTypeName);
+    }
+    const firstRow = sortedRows.find(r => r[col] != null);
+    return firstRow ? isKpiString(String(firstRow[col])) : false;
+  }, [columnsMeta, sortedRows]);
+
+  const handleColHeaderContextMenu = useCallback((col: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setColCtxMenu({ col, x: e.clientX, y: e.clientY });
+  }, []);
+
+  const sumRow = useMemo(() => {
+    if (!sumColumns.size) return null;
+    const sums: Record<string, string> = {};
+    Array.from(sumColumns).forEach(col => {
+      let sum = 0;
+      sortedRows.forEach(row => {
+        const v = row[col];
+        if (v != null && isKpiString(String(v))) sum += Number(String(v));
+      });
+      sums[col] = sum.toLocaleString(undefined, { maximumFractionDigits: 10 });
+    });
+    return sums;
+  }, [sortedRows, sumColumns]);
+
   // ── SQL preview ───────────────────────────────────────────────────────────
 
   const sqlPreview = useMemo(() => {
@@ -764,6 +885,7 @@ export default function CalcViewExplorer() {
     if (!columnsMeta || selected.size === 0) return;
     setStep('querying'); setQueryError(null); setResult(null);
     setCurrentPage(1); setSortOrder([]); setColFilters({}); setColumnOrder([]);
+    setSumColumns(new Set());
     clearSelection();
     const orderedColumns = columnsMeta.columns.map(c => c.columnName).filter(n => selected.has(n));
     const activeFilters    = Object.fromEntries(Object.entries(preFilters).filter(([, v]) => v.trim()));
@@ -776,6 +898,25 @@ export default function CalcViewExplorer() {
     } catch (err) {
       setQueryError(err instanceof Error ? err.message : 'Query failed');
       setStep('selectColumns');
+    }
+  };
+
+  const handleRunAdvancedSql = async () => {
+    const sql = customSql.trim();
+    if (!sql) return;
+    const prevStep = step;
+    setStep('querying'); setQueryError(null); setResult(null);
+    setCurrentPage(1); setSortOrder([]); setColFilters({}); setColumnOrder([]);
+    setSumColumns(new Set());
+    clearSelection();
+    try {
+      const data = await fetchRawSql(sql);
+      setResult(data);
+      setColumnOrder([...data.columns]);
+      setStep('results');
+    } catch (err) {
+      setQueryError(err instanceof Error ? err.message : 'Query failed');
+      setStep(prevStep === 'results' || prevStep === 'querying' ? 'selectColumns' : prevStep);
     }
   };
 
@@ -861,6 +1002,7 @@ export default function CalcViewExplorer() {
     setStep('idle'); setColumnsMeta(null); setSelected(new Set()); setPreFilters({}); setPreFilterOps({});
     setResult(null); setColFilters({}); setSortOrder([]); setCurrentPage(1);
     setColumnError(null); setQueryError(null); setColumnOrder([]);
+    setAdvancedMode(false); setCustomSql('');
     clearSelection();
     inputRef.current?.focus();
   };
@@ -889,7 +1031,7 @@ export default function CalcViewExplorer() {
             {(['1. View', '2. Columns', '3. Results'] as const).map((label, i) => {
               const si = step === 'idle' || step === 'loadingColumns' ? 0 : step === 'selectColumns' || step === 'querying' ? 1 : 2;
               return (
-                <span key={label} className={`px-2.5 py-1 rounded-full font-medium transition-colors ${si === i ? 'bg-blue-600 text-white' : si > i ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
+                <span key={label} className={`px-2.5 py-1 rounded-full font-medium transition-colors ${si === i ? 'bg-am-orange-500 text-white' : si > i ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
                   {si > i ? '✓ ' : ''}{label}
                 </span>
               );
@@ -914,7 +1056,7 @@ export default function CalcViewExplorer() {
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Saved Queries</span>
               {savedQueries.length > 0 && (
-                <span className="inline-flex items-center px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-xs font-medium rounded-full">
+                <span className="inline-flex items-center px-2 py-0.5 bg-am-orange-100 dark:bg-am-orange-900/40 text-am-orange-600 dark:text-am-orange-400 text-xs font-medium rounded-full">
                   {savedQueries.length}
                 </span>
               )}
@@ -941,7 +1083,7 @@ export default function CalcViewExplorer() {
                       </div>
                       <button
                         onClick={() => handleLoadQuery(q)}
-                        className="shrink-0 px-3 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors"
+                        className="shrink-0 px-3 py-1.5 text-xs font-medium text-am-orange-600 dark:text-am-orange-400 border border-am-orange-200 dark:border-am-orange-800 rounded-lg hover:bg-am-orange-50 dark:hover:bg-am-orange-900/20 transition-colors"
                       >Load</button>
                       <button
                         onClick={() => handleDeleteQuery(q.id)}
@@ -965,16 +1107,16 @@ export default function CalcViewExplorer() {
                 <input ref={inputRef} type="text" value={viewName}
                   onChange={e => { setViewName(e.target.value); if (step !== 'idle') handleReset(); }}
                   placeholder='"_SYS_BIC"."package/VIEW_NAME"'
-                  className="w-full font-mono text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                  className="w-full font-mono text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600"
                   spellCheck={false} autoComplete="off" />
               </label>
               <label className="block">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Rows to Return</span>
                 <input type="number" min="1" value={topN} onChange={e => setTopN(e.target.value)}
-                  className="w-32 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                  className="w-32 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent" />
               </label>
               <button type="submit" disabled={isLoading || !viewName.trim()}
-                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap">
+                className="px-5 py-2.5 bg-am-orange-500 text-white rounded-lg text-sm font-medium hover:bg-am-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap">
                 {step === 'loadingColumns' ? 'Loading…' : 'Load Columns'}
               </button>
               {step !== 'idle' && (
@@ -983,18 +1125,103 @@ export default function CalcViewExplorer() {
               )}
             </div>
             {sqlPreview && (
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                <button type="button" onClick={() => setSqlExpanded(v => !v)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
-                  <span className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wide font-medium">Generated SQL</span>
-                  <span className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">
-                    {sqlExpanded ? 'Minimize' : 'Expand'}
-                    <span className={`transition-transform duration-200 ${sqlExpanded ? 'rotate-180' : 'rotate-0'}`}>▾</span>
-                  </span>
-                </button>
+              <div className={`border rounded-lg overflow-hidden transition-colors ${advancedMode ? 'border-amber-300 dark:border-amber-700' : 'border-gray-200 dark:border-gray-700'}`}>
+                {/* Header */}
+                <div className={`flex items-center justify-between px-4 py-2.5 ${advancedMode ? 'bg-amber-50 dark:bg-amber-900/20' : 'bg-gray-50 dark:bg-gray-800'}`}>
+                  <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => setSqlExpanded(v => !v)}
+                      className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wide font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                      Generated SQL
+                      <span className={`ml-1.5 inline-block transition-transform duration-200 ${sqlExpanded ? 'rotate-180' : 'rotate-0'}`}>▾</span>
+                    </button>
+                    {advancedMode && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 uppercase tracking-wide">
+                        Advanced
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {advancedMode && (
+                      <button
+                        type="button"
+                        onClick={() => setCustomSql(sqlPreview)}
+                        className="text-[11px] text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
+                        title="Overwrite your edits with the generated SQL"
+                      >
+                        ↺ Reset to generated
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!advancedMode) {
+                          setCustomSql(sqlPreview);
+                          setSqlExpanded(true);
+                        }
+                        setAdvancedMode(v => !v);
+                      }}
+                      className={`px-2.5 py-1 rounded text-[11px] font-medium border transition-colors ${
+                        advancedMode
+                          ? 'bg-amber-100 dark:bg-amber-900/40 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/60'
+                          : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      {advancedMode ? 'Exit advanced' : 'Advanced'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Body */}
                 {sqlExpanded && (
-                  <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                    <code className="text-sm text-blue-600 dark:text-blue-400 break-all whitespace-pre-wrap">{sqlPreview}</code>
+                  <div className={`border-t ${advancedMode ? 'border-amber-200 dark:border-amber-700' : 'border-gray-200 dark:border-gray-700'}`}>
+                    {advancedMode ? (
+                      <div className="flex flex-col">
+                        <textarea
+                          value={customSql}
+                          onChange={e => setCustomSql(e.target.value)}
+                          onKeyDown={e => {
+                            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                              e.preventDefault();
+                              handleRunAdvancedSql();
+                            }
+                          }}
+                          spellCheck={false}
+                          rows={5}
+                          className="w-full px-4 py-3 font-mono text-sm text-gray-700 dark:text-gray-200 bg-amber-50/60 dark:bg-amber-900/10 resize-y focus:outline-none focus:ring-1 focus:ring-amber-400 dark:focus:ring-amber-600 placeholder:text-gray-400"
+                          placeholder="Enter your SQL statement…"
+                        />
+                        <div className="flex items-center justify-between px-4 py-2.5 bg-amber-50 dark:bg-amber-900/20 border-t border-amber-200 dark:border-amber-700">
+                          <p className="text-[11px] text-amber-600 dark:text-amber-400">
+                            Runs directly against HANA — bypasses column builder.
+                            <span className="ml-1 text-gray-400 dark:text-gray-500">⌘↵ or Ctrl↵ to run</span>
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleRunAdvancedSql}
+                            disabled={!customSql.trim() || step === 'querying'}
+                            className="flex items-center gap-1.5 px-4 py-1.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg transition-colors"
+                          >
+                            {step === 'querying' ? (
+                              <>
+                                <span className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
+                                Running…
+                              </>
+                            ) : (
+                              <>
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" />
+                                </svg>
+                                Run SQL
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800">
+                        <code className="text-sm text-am-orange-600 dark:text-am-orange-400 break-all whitespace-pre-wrap">{sqlPreview}</code>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -1009,9 +1236,17 @@ export default function CalcViewExplorer() {
           </div>
         )}
 
+        {/* Advanced SQL error — shown when step 2 block is not visible */}
+        {advancedMode && queryError && step !== 'selectColumns' && (
+          <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-2xl p-4 flex items-start gap-3">
+            <span className="text-red-500 mt-0.5">✕</span>
+            <div><p className="text-red-800 dark:text-red-300 font-medium text-sm">SQL failed</p><p className="text-red-600 dark:text-red-400 text-sm mt-0.5">{queryError}</p></div>
+          </div>
+        )}
+
         {isLoading && (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-8 flex items-center gap-4">
-            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin shrink-0" />
+            <div className="w-6 h-6 border-2 border-am-orange-500 border-t-transparent rounded-full animate-spin shrink-0" />
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {step === 'loadingColumns' ? 'Fetching column metadata from SYS.VIEW_COLUMNS…' : 'Running query on HANA…'}
             </p>
@@ -1032,7 +1267,7 @@ export default function CalcViewExplorer() {
             )}
             <div className="flex items-center gap-3">
               <button onClick={handleRunQuery} disabled={selected.size === 0 || step === 'querying'}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                className="px-6 py-2.5 bg-am-orange-500 text-white rounded-lg text-sm font-medium hover:bg-am-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 {step === 'querying' ? 'Running…' : `Run Query (${selected.size} col${selected.size !== 1 ? 's' : ''}${activePreFilterCount > 0 ? `, ${activePreFilterCount} WHERE filter${activePreFilterCount !== 1 ? 's' : ''}` : ''})`}
               </button>
               {selected.size === 0 && <p className="text-xs text-red-500 dark:text-red-400">Select at least one column.</p>}
@@ -1057,11 +1292,11 @@ export default function CalcViewExplorer() {
                 <button onClick={handleBackToColumns}
                   className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">← Edit Columns</button>
                 <button onClick={() => { setSaveName(defaultQueryName(viewName)); setSaveModalOpen(true); }}
-                  className="px-3 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors">⊕ Save Query</button>
+                  className="px-3 py-1.5 text-xs font-medium text-am-orange-600 dark:text-am-orange-400 border border-am-orange-200 dark:border-am-orange-800 rounded-lg hover:bg-am-orange-50 dark:hover:bg-am-orange-900/20 transition-colors">⊕ Save Query</button>
                 <button onClick={handleExportCsv}
                   className="px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800 rounded-lg hover:bg-green-50 dark:hover:bg-green-950 transition-colors">↓ Export CSV</button>
                 <span className="text-xs text-gray-500 dark:text-gray-400">{columnOrder.length} columns</span>
-                <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full">
+                <span className="inline-flex items-center px-2.5 py-1 bg-am-orange-50 dark:bg-am-orange-900/20 text-am-orange-600 dark:text-am-orange-400 text-xs font-medium rounded-full">
                   {result.total} row{result.total !== 1 ? 's' : ''} fetched
                 </span>
 
@@ -1095,19 +1330,19 @@ export default function CalcViewExplorer() {
                 )}
                 {isColumnOrderChanged && (
                   <button onClick={handleResetColumnOrder}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 text-xs font-medium rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors">
+                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-am-orange-50 dark:bg-am-orange-900/20 text-am-orange-600 dark:text-am-orange-400 text-xs font-medium rounded-full hover:bg-am-orange-100 dark:hover:bg-am-orange-900/40 transition-colors">
                     ↺ Reset column order
                   </button>
                 )}
                 {sortOrder.length > 0 && (
                   <div className="flex items-center gap-1.5">
                     {sortOrder.map((s, i) => (
-                      <span key={s.col} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full">
-                        <span className="text-blue-400">{i + 1}</span>{s.col}<span>{s.dir === 'asc' ? '▲' : '▼'}</span>
+                      <span key={s.col} className="inline-flex items-center gap-1 px-2 py-1 bg-am-orange-100 dark:bg-am-orange-900/30 text-am-orange-700 dark:text-am-orange-400 text-xs font-medium rounded-full">
+                        <span className="text-am-orange-400">{i + 1}</span>{s.col}<span>{s.dir === 'asc' ? '▲' : '▼'}</span>
                       </span>
                     ))}
                     <button onClick={() => { setSortOrder([]); setCurrentPage(1); }}
-                      className="px-2 py-1 bg-blue-50 dark:bg-blue-950 text-blue-500 text-xs font-medium rounded-full hover:bg-blue-100 transition-colors">✕ sort</button>
+                      className="px-2 py-1 bg-am-orange-50 dark:bg-am-orange-900/20 text-am-orange-500 text-xs font-medium rounded-full hover:bg-am-orange-100 transition-colors">✕ sort</button>
                   </div>
                 )}
                 {activeFilterCount > 0 && (
@@ -1125,9 +1360,9 @@ export default function CalcViewExplorer() {
               <>
                 {/* Selection hint when nothing selected yet */}
                 {selectedRows.size === 0 && (
-                  <div className="px-5 py-2.5 bg-blue-50/50 dark:bg-blue-950/20 border-b border-blue-100 dark:border-blue-900/30 flex items-center gap-2">
-                    <svg className="w-3.5 h-3.5 text-blue-400 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <p className="text-xs text-blue-500 dark:text-blue-400">Click any row to select it, then select a second row and right-click to compare.</p>
+                  <div className="px-5 py-2.5 bg-am-orange-50/50 dark:bg-am-orange-900/10 border-b border-am-orange-100 dark:border-am-orange-900/30 flex items-center gap-2">
+                    <svg className="w-3.5 h-3.5 text-am-orange-400 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p className="text-xs text-am-orange-500 dark:text-am-orange-400">Click any row to select it, then select a second row and right-click to compare.</p>
                   </div>
                 )}
 
@@ -1150,19 +1385,20 @@ export default function CalcViewExplorer() {
                               onDrop={() => handleDrop(col)}
                               onDragEnd={handleDragEnd}
                               onClick={() => handleColumnHeaderClick(col)}
+                              onContextMenu={e => handleColHeaderContextMenu(col, e)}
                               className={`text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap select-none group transition-all cursor-grab active:cursor-grabbing
-                                ${isActive   ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400' : 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400'}
+                                ${isActive   ? 'bg-am-orange-50 dark:bg-am-orange-900/20 text-am-orange-700 dark:text-am-orange-400' : 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400'}
                                 ${isDragging ? 'opacity-40' : ''}
-                                ${isDropZone ? 'border-l-2 border-blue-500' : ''}
+                                ${isDropZone ? 'border-l-2 border-am-orange-500' : ''}
                                 ${!isDragging && !isDropZone && !isActive ? 'hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300' : ''}
                               `}
-                              title="Drag to reorder · Click to sort"
+                              title="Drag to reorder · Click to sort · Right-click to aggregate"
                             >
                               <div className="flex items-center gap-1.5">
                                 <span className="text-gray-300 dark:text-gray-600 group-hover:text-gray-400 text-xs leading-none cursor-grab" aria-hidden>⠿</span>
                                 <span>{col}</span>
                                 {priority !== null && sortOrder.length > 1 && (
-                                  <span className="inline-flex items-center justify-center w-4 h-4 bg-blue-600 text-white text-[9px] font-bold rounded-full">{priority}</span>
+                                  <span className="inline-flex items-center justify-center w-4 h-4 bg-am-orange-500 text-white text-[9px] font-bold rounded-full">{priority}</span>
                                 )}
                                 <SortIcon dir={entry?.dir ?? null} />
                               </div>
@@ -1177,8 +1413,8 @@ export default function CalcViewExplorer() {
                             <div className="relative">
                               <input type="text" value={colFilters[col] ?? ''} onChange={e => handleColFilter(col, e.target.value)}
                                 placeholder="Filter…"
-                                className={`w-full text-xs border rounded-md px-2.5 py-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder:text-gray-300 dark:placeholder:text-gray-600 font-mono min-w-[80px]
-                                  ${colFilters[col]?.trim() ? 'border-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300' : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-200'}`} />
+                                className={`w-full text-xs border rounded-md px-2.5 py-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-am-orange-500 focus:border-am-orange-500 transition-colors placeholder:text-gray-300 dark:placeholder:text-gray-600 font-mono min-w-[80px]
+                                  ${colFilters[col]?.trim() ? 'border-am-orange-400 dark:border-am-orange-600 bg-am-orange-50 dark:bg-am-orange-900/30 text-am-orange-800 dark:text-am-orange-200' : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/60 text-gray-700 dark:text-gray-200'}`} />
                               {colFilters[col]?.trim() && (
                                 <button onClick={() => handleColFilter(col, '')}
                                   className="absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs" tabIndex={-1}>✕</button>
@@ -1190,6 +1426,18 @@ export default function CalcViewExplorer() {
                     </thead>
 
                     <tbody>
+                      {/* ── SUM total row — pinned as first row when active ── */}
+                      {sumRow && (
+                        <tr className="border-b-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20">
+                          <td className="px-4 py-2.5 text-xs font-bold text-amber-700 dark:text-amber-400 select-none w-10 shrink-0">Σ</td>
+                          {columnOrder.map(col => (
+                            <td key={col} className="px-4 py-2.5 font-mono text-xs font-bold text-amber-700 dark:text-amber-400 whitespace-nowrap">
+                              {sumColumns.has(col) && sumRow[col] !== undefined ? sumRow[col] : ''}
+                            </td>
+                          ))}
+                        </tr>
+                      )}
+
                       {pagedRows.length === 0 ? (
                         <tr><td colSpan={columnOrder.length + 1} className="px-4 py-10 text-center text-gray-400 dark:text-gray-600 text-sm">No rows match the current filters.</td></tr>
                       ) : (
@@ -1226,7 +1474,7 @@ export default function CalcViewExplorer() {
                                 const active  = !!getSortEntry(col);
                                 return (
                                   <td key={col}
-                                    className={`px-4 py-3 font-mono text-xs text-gray-700 dark:text-gray-300 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis ${active ? 'bg-blue-50/40 dark:bg-blue-950/30' : ''}`}
+                                    className={`px-4 py-3 font-mono text-xs text-gray-700 dark:text-gray-300 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis ${active ? 'bg-am-orange-50/30 dark:bg-am-orange-900/10' : ''}`}
                                     title={display ?? ''}>
                                     {display === null
                                       ? <span className="text-gray-300 dark:text-gray-600 italic">NULL</span>
@@ -1251,7 +1499,7 @@ export default function CalcViewExplorer() {
         )}
       </div>
 
-      {/* ── Context menu ── */}
+      {/* ── Row context menu ── */}
       {ctxMenu && (
         <ContextMenu
           x={ctxMenu.x} y={ctxMenu.y}
@@ -1259,6 +1507,19 @@ export default function CalcViewExplorer() {
           onCompare={handleOpenCompare}
           onClear={clearSelection}
           onClose={() => setCtxMenu(null)}
+        />
+      )}
+
+      {/* ── Column context menu ── */}
+      {colCtxMenu && (
+        <ColumnContextMenu
+          x={colCtxMenu.x} y={colCtxMenu.y}
+          col={colCtxMenu.col}
+          isNumeric={isColNumeric(colCtxMenu.col)}
+          hasSumAlready={sumColumns.has(colCtxMenu.col)}
+          onAddSum={() => setSumColumns(prev => { const n = new Set(Array.from(prev)); n.add(colCtxMenu.col); return n; })}
+          onRemoveSum={() => setSumColumns(prev => { const n = new Set(Array.from(prev)); n.delete(colCtxMenu.col); return n; })}
+          onClose={() => setColCtxMenu(null)}
         />
       )}
 
@@ -1275,14 +1536,14 @@ export default function CalcViewExplorer() {
                 onChange={e => setSaveName(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleSaveQuery(); if (e.key === 'Escape') setSaveModalOpen(false); }}
                 autoFocus
-                className="w-full text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-am-orange-500 focus:border-transparent"
               />
             </label>
             <div className="flex gap-2 justify-end">
               <button onClick={() => setSaveModalOpen(false)}
                 className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Cancel</button>
               <button onClick={handleSaveQuery} disabled={!saveName.trim()}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Save</button>
+                className="px-4 py-2 text-sm font-medium text-white bg-am-orange-500 rounded-lg hover:bg-am-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Save</button>
             </div>
           </div>
         </div>

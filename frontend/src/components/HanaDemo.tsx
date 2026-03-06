@@ -42,7 +42,7 @@ export default function HanaDemo() {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Verify HANA connection</p>
               </div>
               <button onClick={handleHealth} disabled={loading === 'health'}
-                className="px-4 py-2 bg-gray-700 dark:bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors">
+                className="px-4 py-2 bg-am-orange-500 text-white rounded-lg text-sm font-medium hover:bg-am-orange-600 disabled:opacity-50 transition-colors">
                 {loading === 'health' ? 'Checking...' : 'Check'}
               </button>
             </div>
@@ -79,7 +79,7 @@ export default function HanaDemo() {
         {/* Calc View Explorer link */}
         <div className="mt-4">
           <Link href="/calcview"
-            className="block w-full text-center px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+            className="block w-full text-center px-4 py-3 bg-white dark:bg-gray-900 border border-am-orange-200 dark:border-am-orange-900 rounded-2xl text-sm font-medium text-am-orange-600 dark:text-am-orange-400 hover:bg-am-orange-50 dark:hover:bg-am-orange-900/20 hover:border-am-orange-300 dark:hover:border-am-orange-800 transition-colors">
             Open Calculation View Explorer →
           </Link>
         </div>

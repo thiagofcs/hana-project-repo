@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ArcelorMittal brand selection highlight */
+::selection {
+  background-color: #F47D30;
+  color: #fff;
+}

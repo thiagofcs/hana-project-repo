@@ -29,7 +29,7 @@ export default function SessionBar() {
       <button
         onClick={handleLogout}
         disabled={isLoggingOut}
-        className="text-sm px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="text-sm px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-am-orange-400 hover:text-am-orange-600 dark:hover:text-am-orange-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {isLoggingOut ? 'Logging out…' : 'Logout'}
       </button>
